@@ -16,14 +16,21 @@
 
 package de.mobanisto.odf;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.HashMap;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 import org.odftoolkit.odfdom.changes.TextContainingElement;
 import org.odftoolkit.odfdom.doc.OdfTextDocument;
 import org.odftoolkit.odfdom.dom.element.office.OfficeTextElement;
+import org.supercsv.io.CsvMapReader;
+import org.supercsv.io.ICsvMapReader;
+import org.supercsv.prefs.CsvPreference;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
@@ -47,14 +54,55 @@ public class MailMerge
 		Path fileCsv = Paths.get(filenameCsv);
 		Path fileOutput = Paths.get(filenameOutput);
 
-		// TODO: load csv file. In the meantime prepare some fake data
-		Map<String, String> variables = new HashMap<>();
-		variables.put("salutation", "Mrs.");
-		variables.put("first name", "Janice");
-		variables.put("name", "Doe");
-		variables.put("address line1", "Castle Road 45");
-		variables.put("address line2", "12345 Old Berlin");
+		String outputFilename = fileOutput.getFileName().toString();
+		String filePattern = determineFilePattern(outputFilename);
 
+		List<Map<String, String>> datasets = readCsv(fileCsv);
+
+		for (int i = 0; i < datasets.size(); i++) {
+			Map<String, String> variables = datasets.get(i);
+
+			String filenameN = String.format(filePattern, i + 1);
+			Path fileOutputN = fileOutput.resolveSibling(filenameN);
+
+			mailMerge(fileInput, variables, fileOutputN);
+		}
+	}
+
+	private static String determineFilePattern(String outputFilename)
+	{
+		if (!outputFilename.contains(".")) {
+			return outputFilename + "-%d";
+		}
+		int pos = outputFilename.lastIndexOf(".");
+		String namePart = outputFilename.substring(0, pos);
+		String extensionPart = outputFilename.substring(pos);
+		return namePart + "-%d" + extensionPart;
+	}
+
+	private static List<Map<String, String>> readCsv(Path file)
+			throws IOException
+	{
+		List<Map<String, String>> datasets = new ArrayList<>();
+
+		BufferedReader reader = Files.newBufferedReader(file);
+		try (ICsvMapReader mapReader = new CsvMapReader(reader,
+				CsvPreference.STANDARD_PREFERENCE)) {
+
+			final String[] header = mapReader.getHeader(true);
+
+			Map<String, String> values;
+			while ((values = mapReader.read(header)) != null) {
+				datasets.add(values);
+			}
+		}
+
+		return datasets;
+	}
+
+	private static void mailMerge(Path fileInput, Map<String, String> variables,
+			Path fileOutput) throws Exception
+	{
 		OdfTextDocument odt = OdfTextDocument.loadDocument(fileInput.toFile());
 
 		OfficeTextElement root = odt.getContentRoot();

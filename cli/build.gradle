@@ -1,5 +1,6 @@
 dependencies {
     compile 'org.odftoolkit:odfdom-java:1.0.0-BETA1'
+    compile 'net.sf.supercsv:super-csv:2.4.0'
 }
 
 task copyJars(type: Copy) {

@@ -1,0 +1,3 @@
+include 'samples', 'cli'
+project(':samples').name = 'odftoolkit-samples-samples'
+project(':cli').name = 'odftoolkit-samples-cli'

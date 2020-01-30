@@ -1,0 +1,3 @@
+dependencies {
+    compile 'org.odftoolkit:odfdom-java:1.0.0-BETA1'
+}

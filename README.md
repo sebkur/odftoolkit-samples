@@ -26,8 +26,15 @@ To execute the scripts in the `scripts` directory, build the project:
 
 ### CLI examples
 
+Printing a ODT file's content as plain text:
+
     ./scripts/print-plaintext samples/src/main/resources/main.odt
     ./scripts/print-plaintext samples/src/main/resources/letter.odt
+
+Performing a mail merge, i.e. replace some `${variable}` content within
+a document based on values in a CSV file and produce a number of output
+files. The number of files produced equals the number of rows in the CSV
+file:
 
     ./scripts/mailmerge samples/src/main/resources/letter.odt
         samples/src/main/resources/recipients.csv test.odt

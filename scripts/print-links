@@ -1,0 +1,7 @@
+#!/bin/bash
+
+DIR=$(dirname $0)
+CMD="$DIR/odftoolkit-samples.sh"
+CLASS="de.mobanisto.odf.PrintLinks"
+
+exec "$CMD" "$CLASS" "$@"

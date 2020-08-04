@@ -26,7 +26,7 @@ To execute the scripts in the `scripts` directory, build the project:
 
 ### CLI examples
 
-Printing a ODT file's content as plain text:
+Printing an ODT file's content as plain text:
 
     ./scripts/print-plaintext samples/src/main/resources/main.odt
     ./scripts/print-plaintext samples/src/main/resources/letter.odt
@@ -38,6 +38,10 @@ file:
 
     ./scripts/mailmerge samples/src/main/resources/letter.odt
         samples/src/main/resources/recipients.csv test.odt
+
+Printing the internal links contained in an ODT file:
+
+    ./scripts/print-links file.odt
 
 ## License
 
